@@ -17,5 +17,6 @@ build/
 *.zip
 jdk-*
 # Firebase / GCP secrets
-*.json
-backend/src/*firebase-adminsdk*
+# Firebase / GCP secrets
+backend/src/*firebase-adminsdk*.json
+firebase-adminsdk*.json
