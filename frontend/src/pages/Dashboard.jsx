@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ExpenseSDK,BudgetSDK } from "../api/sdk";
+import { ExpenseSDK,BudgetSDK } from "../api/sdk.js";
 import "./Dashboard.css";
 import ExpensePieChart from "../components/ExpensePieCharts";
 export default function Dashboard() {
@@ -14,8 +14,8 @@ export default function Dashboard() {
           ExpenseSDK.getAll(),
           BudgetSDK.getBudget()
         ]);
-        setTransactions(expensesRes.data);
-        setMonthlyBudget(budgetRes.data.amount || 0);
+        setTransactions(expensesRes);
+        setMonthlyBudget(budgetRes?.amount|| 0);
       } catch (err) {
         console.error("Dashboard load failed", err);
         setError("Failed to load dashboard data");

@@ -1,37 +1,30 @@
-import { useEffect, useState } from "react";
-import { ExpenseSDK } from "../api/sdk";
+import { useState, useEffect } from "react";
+import { useExpenses } from "../hooks/useExpenses";
 import ExpenseModal from "../components/ExpenseModal";
 import TransactionList from "../components/Transaction";
 import "./Expenses.css";
 
 export default function Expenses() {
-  const [transactions, setTransactions] = useState([]);
+  const {
+    expenses,
+    loading,
+    error,
+    addExpense,
+    updateExpense,
+    deleteExpense,
+  } = useExpenses();
+
   const [filteredTransactions, setFilteredTransactions] = useState([]);
 
   const [category, setCategory] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
 
-  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
-  useEffect(() => {
-    const fetchExpenses = async () => {
-      try {
-        const res = await ExpenseSDK.getAll();
-        setTransactions(res.data);
-      } catch (err) {
-        console.error("Failed to load expenses", err);
-        alert("Failed to load expenses");
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchExpenses();
-  }, []);
   useEffect(() => {
-    let filtered = [...transactions];
+    let filtered = [...expenses];
 
     if (category !== "all") {
       filtered = filtered.filter(t => t.category === category);
@@ -50,48 +43,39 @@ export default function Expenses() {
     }
 
     setFilteredTransactions(filtered);
-  }, [transactions, category, dateFrom, dateTo]);
+  }, [expenses, category, dateFrom, dateTo]);
+
   const openAddModal = () => {
     setEditingTransaction(null);
     setIsModalOpen(true);
   };
+
   const openEditModal = (txn) => {
     setEditingTransaction(txn);
     setIsModalOpen(true);
   };
- const handleSaveExpense = async (data) => {
-  try {
-    if (editingTransaction) {
-      const res = await ExpenseSDK.update(editingTransaction.id, data);
-      setTransactions(prev =>
-        prev.map(t =>
-          t.id === editingTransaction.id ? res.data : t
-        )
-      );
-    } else {
-      const res = await ExpenseSDK.create(data);
-      setTransactions(prev => [res.data, ...prev]);
-    }
 
-    setIsModalOpen(false);
-    setEditingTransaction(null);
-  } catch (err) {
-    console.error("Save failed", err);
-    alert("Failed to save expense");
-  }
-};
-  const deleteExpense = async (id) => {
+  const handleSaveExpense = async (data) => {
     try {
-      await ExpenseSDK.delete(id);
-      setTransactions(prev => prev.filter(t => t.id !== id));
-    } catch (err) {
-      console.error("Delete failed", err);
-      alert("Failed to delete expense");
+      if (editingTransaction) {
+        await updateExpense(editingTransaction.id, data);
+      } else {
+        await addExpense(data);
+      }
+
+      setIsModalOpen(false);
+      setEditingTransaction(null);
+    } catch {
+      alert("Failed to save expense");
     }
   };
 
   if (loading) {
     return <p style={{ padding: "30px" }}>Loading expenses...</p>;
+  }
+
+  if (error) {
+    return <p style={{ padding: "30px", color: "red" }}>{error}</p>;
   }
 
   return (
@@ -108,6 +92,7 @@ export default function Expenses() {
           + Add Expense
         </button>
       </div>
+
       <div className="filters">
         <div>
           <label>Category</label>
@@ -153,6 +138,7 @@ export default function Expenses() {
           Clear Filters
         </button>
       </div>
+
       <div className="expenses-card">
         <h3>
           Transactions ({filteredTransactions.length})
@@ -162,13 +148,13 @@ export default function Expenses() {
           <p className="empty">No transactions found</p>
         ) : (
           <TransactionList
-  transactions={filteredTransactions}
-  onEdit={openEditModal}
-  onDelete={deleteExpense}
-/>
-
+            transactions={filteredTransactions}
+            onEdit={openEditModal}
+            onDelete={deleteExpense}
+          />
         )}
       </div>
+
       <ExpenseModal
         isOpen={isModalOpen}
         onClose={() => {

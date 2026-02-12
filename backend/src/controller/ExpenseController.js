@@ -3,7 +3,11 @@ import joi from "joi";
 const expenseSchema = joi.object({
   amount: joi.number().positive().required(),
   category: joi.string().required(),
+  date: joi.date().required(),
+  description: joi.string().allow("").optional(),
+  type: joi.string().valid("income", "expense").required(),
 });
+
 export const getExpenses = async (req, res) => {
   const result = await pool.query(
     "SELECT * FROM expenses WHERE user_id=$1 ORDER BY date DESC",
@@ -11,19 +15,26 @@ export const getExpenses = async (req, res) => {
   );
   res.json(result.rows);
 };
-
 export const addExpense = async (req, res) => {
-  const value = await expenseSchema.validateAsync(req.body);
-  const { amount, category, date, description, type } = value;
+  try {
+    const value = await expenseSchema.validateAsync(req.body);
 
-  const result = await pool.query(
-    `INSERT INTO expenses(user_id,amount,category,date,description,type)
-     VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
-    [req.user.id, amount, category, date, description, type]
-  );
+    const { amount, category, date, description, type } = value;
 
-  res.status(201).json(result.rows[0]);
+    const result = await pool.query(
+      `INSERT INTO expenses(user_id,amount,category,date,description,type)
+       VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
+      [req.user.id, amount, category, date, description, type]
+    );
+
+    res.status(201).json(result.rows[0]);
+
+  } catch (err) {
+    console.error("Add expense error:", err);
+    res.status(400).json({ message: err.message });
+  }
 };
+
 
 export const deleteExpense = async (req, res) => {
   await pool.query(

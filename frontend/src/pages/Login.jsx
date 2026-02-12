@@ -18,11 +18,11 @@ export default function Login() {
 
     try {
       const res = await AuthSDK.login(email, password);
-      login(res.data);
+      login(res.user);
       navigate("/dashboard");
     } catch (err) {
       setError(
-        err?.response?.data?.message || "Invalid email or password"
+        err.message || "Invalid email or password"
       );
     } finally {
       setLoading(false);

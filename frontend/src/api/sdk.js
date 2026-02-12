@@ -1,40 +1,78 @@
-import api from './api';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
-import { getAuth } from "firebase/auth";
-const auth = getAuth();
+
+import api from "./api";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  sendEmailVerification,
+    updateProfile,
+} from "firebase/auth";
+import { auth } from "../firebase.js";
 
 export const AuthSDK = {
-    login: async (email, password) => {
-        try {
-            const userData = await signInWithEmailAndPassword(auth, email, password);
-        } catch (error) {
-            throw error.response ? error.response.data : error;
-        }
-},
-   signup: async (name,email,password)=>{
-        try {
-            const response = await createUserWithEmailAndPassword(auth, email, password);
-            return response.user;
-        } catch (error) {
-            throw error.response ? error.response.data : error;
-        }
-   },
-    logout: async () => {
-        try {
-            await signOut(auth);
-        } catch (error) {
-            throw error.response ? error.response.data : error;
-        }
-    },
-    me: async () => {
-         try {
-           const response = await api.get('/auth/me');
-            return response.data;
-        } catch (error) {
-            throw error.response ? error.response.data : error;
-        }
-    },
+  signup: async (name, email, password) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const user = userCredential.user;
+      await updateProfile(user, {
+        displayName: name,
+      });
+      await sendEmailVerification(user);
+      await signOut(auth);
+
+      return { message: "Verification email sent" };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+  login: async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,      
+        email,
+        password
+      );
+
+      const user = userCredential.user;
+      await user.reload();
+
+      if (!user.emailVerified) {
+        await signOut(auth);
+        throw new Error("Please verify your email before logging in");
+      }
+
+      const firebaseToken = await user.getIdToken(true);
+
+      const response = await api.post("/auth/login", {
+        firebaseToken,
+      });
+
+      localStorage.setItem("jwt", response.data.token);
+
+      return response.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+  logout: async () => {
+    await signOut(auth);
+    localStorage.removeItem("jwt");
+  },
+  me: async () => {
+    try {
+      const response = await api.get("/auth/me");
+      return response.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
 };
+
 export const ExpenseSDK ={
     getAll: async()=>{
         try{

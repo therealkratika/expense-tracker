@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-
+import { getAuth } from "firebase/auth";
 const firebaseConfig = {
   apiKey: "AIzaSyBpywChpZMgafOsBN85iDoUBzRCVhPDPEM",
   authDomain: "expense-tracker-8d3fd.firebaseapp.com",
@@ -12,5 +11,4 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-export default app;
+export const auth = getAuth(app);

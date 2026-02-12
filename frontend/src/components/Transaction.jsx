@@ -14,26 +14,6 @@ export default function TransactionList({
       year: "numeric",
     });
   };
-
-  const getCategoryIcon = (category) => {
-    switch (category) {
-      case "Food":
-        return "🍔";
-      case "Transport":
-        return "🚗";
-      case "Shopping":
-        return "🛍️";
-      case "Entertainment":
-        return "🎬";
-      case "Health":
-        return "❤️";
-      case "Work":
-        return "💼";
-      default:
-        return "📄";
-    }
-  };
-
   return (
     <div className="txn-list">
       {transactions.map((txn) => {
@@ -47,7 +27,6 @@ export default function TransactionList({
                   isIncome ? "income" : "expense"
                 }`}
               >
-                {getCategoryIcon(txn.category)}
               </div>
 
               <div className="txn-info">

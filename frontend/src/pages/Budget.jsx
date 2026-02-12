@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
 import { BudgetSDK,ExpenseSDK } from "../api/sdk";
+import { useBudget } from "../hooks/useBudget";
 import "./Budget.css";
 
 export default function Budget() {
-  const [monthlyBudget, setMonthlyBudget] = useState(0);
+  const  { budget, updateBudget } = useBudget();
   const [budgetInput, setBudgetInput] = useState("");
   const [editing, setEditing] = useState(false);
   const [expenses, setExpenses] = useState([]);
 
   useEffect(() => {
     const loadData = async () => {
-      const [budgetRes, expenseRes] = await Promise.all([
-        BudgetSDK.getBudget(),
-        ExpenseSDK.getAll(),
-      ]);
-
-      setMonthlyBudget(budgetRes.data.amount);
-      setBudgetInput(budgetRes.data.amount.toString());
-      setExpenses(expenseRes.data);
+      const exp = await ExpenseSDK.getAll();
+      setExpenses(exp);
     };
 
     loadData();
@@ -28,9 +23,9 @@ export default function Budget() {
     .reduce((sum, e) => sum + Math.abs(e.amount), 0);
 
   const budgetUsed =
-    monthlyBudget === 0 ? 0 : (totalExpenses / monthlyBudget) * 100;
+    budget === 0 ? 0 : (totalExpenses / budget) * 100;
 
-  const remaining = monthlyBudget - totalExpenses;
+  const remaining = budget - totalExpenses;
 
   const daysInMonth = new Date(
     new Date().getFullYear(),
@@ -48,8 +43,7 @@ export default function Budget() {
     const value = parseFloat(budgetInput);
     if (isNaN(value) || value <= 0) return;
 
-    await BudgetSDK.updateBudget(value);
-    setMonthlyBudget(value);
+    await updateBudget(value);
     setEditing(false);
   };
 
