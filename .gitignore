@@ -16,3 +16,7 @@ build/
 *.msi
 *.zip
 jdk-*
+backend/src/expense-tracker-8d3fd-firebase-adminsdk-fbsvc-f7e740bc99.json
+# Firebase / GCP secrets
+*.json
+backend/src/*firebase-adminsdk*
