@@ -1,12 +1,7 @@
-import joi from "joi";
+
 import admin from "../../firebaseAdmin.js";
 import jwt from "jsonwebtoken";
 import pool from "../database/db.js";
-
-const loginSchema = joi.object({
-  email: joi.string().email().required(),
-  password: joi.string().min(6).required(),
-});
 export const signin = async (req, res) => {
   try {
     const { firebaseToken } = req.body;
