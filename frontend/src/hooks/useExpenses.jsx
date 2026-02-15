@@ -10,7 +10,7 @@ export function useExpenses() {
     try {
       setLoading(true);
       const data = await ExpenseSDK.getAll();
-      setExpenses(data);
+      setExpenses(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.message);
     } finally {

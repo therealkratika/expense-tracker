@@ -1,28 +1,38 @@
-import pool from "../database/db.js";
-import joi from "joi";
-const budgetSchema = joi.object({
-  amount: joi.number().positive().required(),
-});
-export const getBudget = async(req,res)=>{
-    const result = await pool.query(
-        "SELECT amount FROM budgets WHERE user_id=$1",
-        [req.user.id]
-    );
-    if(!result.rows.length){
-        return res.json({amount:0});
-    }
-    res.json(result.rows[0]);
-};
-export const updateBudget = async (req, res) => {
-  const value = await budgetSchema.validateAsync(req.body);
-  const { amount } = value;
-  await pool.query(
-    `INSERT INTO budgets (user_id, amount)
-     VALUES ($1, $2)
-     ON CONFLICT (user_id)
-     DO UPDATE SET amount = $2`,
-    [req.user.id, amount]
-  );
+import { findBudgetByID, updateBudgetByID } from "../repository/budget.repo.js";
+import Joi from "joi";
 
-  res.json({ amount });
+const budgetSchema = Joi.object({
+  amount: Joi.number().positive().required(),
+});
+
+export const getBudget = async (req, res) => {
+  try {
+    const budget = await findBudgetByID(req.user.id);
+
+    if (!budget) {
+      return res.json({ amount: 0 });
+    }
+
+    res.json(budget);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch budget" });
+  }
+};
+
+export const updateBudget = async (req, res) => {
+  try {
+    const { amount } = await budgetSchema.validateAsync(req.body);
+
+    const updated = await updateBudgetByID(req.user.id, amount);
+
+    res.json(updated);
+  } catch (err) {
+    if (err.isJoi) {
+      return res.status(400).json({ message: err.message });
+    }
+
+    console.error(err);
+    res.status(500).json({ message: "Failed to update budget" });
+  }
 };

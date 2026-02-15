@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import api from "../api/api";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 
 const UserContext = createContext(null);
 
@@ -8,30 +9,29 @@ export function UserProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return setLoading(false);
-
-    api.get("/auth/me")
-      .then((res) => setUser(res.data.user))
-      .catch(() => {
-        localStorage.removeItem("token");
+    const unsub = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser({
+          uid: currentUser.uid,
+          email: currentUser.email,
+          name: currentUser.displayName,
+        });
+      } else {
         setUser(null);
-      })
-      .finally(() => setLoading(false));
+      }
+      setLoading(false);
+    });
+
+    return unsub;
   }, []);
 
-  const login = ({ token, user }) => {
-    localStorage.setItem("token", token);
-    setUser(user);
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
+  const logout = async () => {
+    await auth.signOut();
     setUser(null);
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout, loading }}>
+    <UserContext.Provider value={{ user, loading, logout }}>
       {!loading && children}
     </UserContext.Provider>
   );

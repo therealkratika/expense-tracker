@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useExpenses } from "../hooks/useExpenses";
 import ExpenseModal from "../components/ExpenseModal";
 import TransactionList from "../components/Transaction";
+import { useMemo } from "react";
 import "./Expenses.css";
 
 export default function Expenses() {
@@ -14,8 +15,6 @@ export default function Expenses() {
     deleteExpense,
   } = useExpenses();
 
-  const [filteredTransactions, setFilteredTransactions] = useState([]);
-
   const [category, setCategory] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -23,27 +22,27 @@ export default function Expenses() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
 
-  useEffect(() => {
-    let filtered = [...expenses];
+const filteredTransactions = useMemo(() => {
+  let filtered = [...expenses];
 
-    if (category !== "all") {
-      filtered = filtered.filter(t => t.category === category);
-    }
+  if (category !== "all") {
+    filtered = filtered.filter(t => t.category === category);
+  }
 
-    if (dateFrom) {
-      filtered = filtered.filter(
-        t => new Date(t.date) >= new Date(dateFrom)
-      );
-    }
+  if (dateFrom) {
+    filtered = filtered.filter(
+      t => new Date(t.date) >= new Date(dateFrom)
+    );
+  }
 
-    if (dateTo) {
-      filtered = filtered.filter(
-        t => new Date(t.date) <= new Date(dateTo)
-      );
-    }
+  if (dateTo) {
+    filtered = filtered.filter(
+      t => new Date(t.date) <= new Date(dateTo)
+    );
+  }
 
-    setFilteredTransactions(filtered);
-  }, [expenses, category, dateFrom, dateTo]);
+  return filtered;
+}, [expenses, category, dateFrom, dateTo]);
 
   const openAddModal = () => {
     setEditingTransaction(null);

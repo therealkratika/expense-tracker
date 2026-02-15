@@ -17,9 +17,10 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await AuthSDK.login(email, password);
-      login(res.user);
-      navigate("/dashboard");
+     const user = await AuthSDK.login(email, password);       
+navigate("/dashboard",{replace: true});  
+
+
     } catch (err) {
       setError(
         err.message || "Invalid email or password"

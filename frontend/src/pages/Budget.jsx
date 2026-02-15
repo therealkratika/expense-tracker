@@ -12,7 +12,7 @@ export default function Budget() {
   useEffect(() => {
     const loadData = async () => {
       const exp = await ExpenseSDK.getAll();
-      setExpenses(exp);
+      setExpenses(exp.expenses || []);
     };
 
     loadData();
@@ -70,10 +70,17 @@ export default function Budget() {
           </>
         ) : (
           <>
-            <p className="big">₹ {monthlyBudget}</p>
-            <button className="secondary" onClick={() => setEditing(true)}>
-              Update Budget
-            </button>
+            <p className="big">₹ {budget}</p>
+           <button
+  className="secondary"
+  onClick={() => {
+    setBudgetInput(budget);
+    setEditing(true);
+  }}
+>
+  Update Budget
+</button>
+
           </>
         )}
       </div>

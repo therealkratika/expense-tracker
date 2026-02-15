@@ -14,7 +14,7 @@ export default function Dashboard() {
           ExpenseSDK.getAll(),
           BudgetSDK.getBudget()
         ]);
-        setTransactions(expensesRes);
+        setTransactions(expensesRes.expenses || []);
         setMonthlyBudget(budgetRes?.amount|| 0);
       } catch (err) {
         console.error("Dashboard load failed", err);

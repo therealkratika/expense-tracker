@@ -1,31 +1,23 @@
-import jwt from "jsonwebtoken";
+import admin from "../../firebaseAdmin.js"
 import pool from "../database/db.js";
 
 const authMiddleware = async (req, res, next) => {
-  let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer ")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
-
-  if (!token) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Not authorized" });
   }
-
+  const token = authHeader.split(" ")[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = await admin.auth().verifyIdToken(token);
 
     const result = await pool.query(
-      "SELECT id, name, email FROM users WHERE id = $1",
-      [decoded.id]
+       "SELECT id, name, email FROM users WHERE firebase_uid = $1",
+      [decoded.uid]
     );
-
+    
     if (result.rows.length === 0) {
       return res.status(401).json({ message: "User not found" });
     }
-
     req.user = result.rows[0];
     next();
   } catch {
