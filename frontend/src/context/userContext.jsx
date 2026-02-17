@@ -6,33 +6,19 @@ const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser({
-          uid: currentUser.uid,
-          email: currentUser.email,
-          name: currentUser.displayName,
-        });
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
+      setUser(currentUser);
+      setAuthReady(true);
     });
-
     return unsub;
   }, []);
 
-  const logout = async () => {
-    await auth.signOut();
-    setUser(null);
-  };
-
   return (
-    <UserContext.Provider value={{ user, loading, logout }}>
-      {!loading && children}
+    <UserContext.Provider value={{ user, authReady }}>
+      {authReady && children}
     </UserContext.Provider>
   );
 }

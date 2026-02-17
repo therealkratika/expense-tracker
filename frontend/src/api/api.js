@@ -10,7 +10,7 @@ api.interceptors.request.use(
     const user = auth.currentUser;
 
     if (user) {
-      const idToken = await user.getIdToken(true); // 🔥 FORCE refresh
+      const idToken = await user.getIdToken(true); 
       config.headers.Authorization = `Bearer ${idToken}`;
     }
 

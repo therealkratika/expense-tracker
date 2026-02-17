@@ -1,0 +1,2 @@
+DATABASE_URL = postgresql://database connection link
+PORT = post number example - 2000 or 5000
