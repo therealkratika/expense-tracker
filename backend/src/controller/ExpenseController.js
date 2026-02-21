@@ -24,7 +24,6 @@ export const addExpense = async (req, res) => {
     res.status(201).json(result);
 
   } catch (err) {
-    console.error("Add expense error:", err);
     res.status(400).json({ message: err.message });
   }
 };
@@ -48,7 +47,6 @@ export const updateExpense = async (req, res) => {
 
     res.json(result);
   } catch (err) {
-    console.error("Update expense error:", err);
     res.status(500).json({ message: "Failed to update expense" });
   }
 };

@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import React from "react";
+import { useState} from "react";
 import { useExpenses } from "../hooks/useExpenses";
 import ExpenseModal from "../components/ExpenseModal";
 import TransactionList from "../components/Transaction";

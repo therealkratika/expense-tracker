@@ -1,3 +1,4 @@
+import React from "react";  
 import { useEffect, useState } from "react";
 import "./ExpenseModal.css";
 
@@ -45,7 +46,7 @@ export default function ExpenseModal({ isOpen, onClose, onSave, transaction }) {
       type,
     });
 
-    onClose(); // close modal after save
+    onClose();
   } finally {
     setLoading(false);
   }

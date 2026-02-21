@@ -1,22 +1,19 @@
-import axios from "axios";
-import { auth } from "../firebase";
+import axios from 'axios';
+import { auth } from '../firebase';
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: 'http://localhost:5000',
 });
 
-api.interceptors.request.use(
-  async (config) => {
-    const user = auth.currentUser;
+api.interceptors.request.use(async (config) => {
+  const user = auth.currentUser;
 
-    if (user) {
-      const idToken = await user.getIdToken(true); 
-      config.headers.Authorization = `Bearer ${idToken}`;
-    }
+  if (user) {
+    const token = await user.getIdToken();
+    config.headers.Authorization = `Bearer ${token}`;
+  }
 
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+  return config;
+});
 
 export default api;

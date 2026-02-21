@@ -1,13 +1,12 @@
-
-import api from "./api";
+import api from './api';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
   sendEmailVerification,
   signOut,
-} from "firebase/auth";
-import { auth } from "../firebase";
+} from 'firebase/auth';
+import { auth } from '../firebase';
 
 export const AuthSDK = {
   signup: async (name, email, password) => {
@@ -17,18 +16,13 @@ export const AuthSDK = {
         email,
         password
       );
+
       const user = userCredential.user;
       await updateProfile(user, { displayName: name });
       await sendEmailVerification(user);
-      await api.post("/users", {
-        name,
-        email,
-        firebase_uid: user.uid,
-      });
-
       await signOut(auth);
 
-      return { message: "Verification email sent" };
+      return { message: 'Verification email sent' };
     } catch (error) {
       throw new Error(error.message);
     }
@@ -43,11 +37,11 @@ export const AuthSDK = {
       );
 
       const user = userCredential.user;
-      await user.reload();
+      await user.getIdToken(true); 
 
       if (!user.emailVerified) {
         await signOut(auth);
-        throw new Error("Please verify your email before logging in");
+        throw new Error('Please verify your email before logging in');
       }
       return {
         uid: user.uid,
@@ -76,7 +70,7 @@ export const AuthSDK = {
 export const ExpenseSDK = {
   getAll: async () => {
     try {
-      const response = await api.get("/expenses");
+      const response = await api.get('/expenses');
       return response.data || [];
     } catch (error) {
       throw error.response ? error.response.data : error;
@@ -85,7 +79,7 @@ export const ExpenseSDK = {
 
   create: async (data) => {
     try {
-      const response = await api.post("/expenses", data);
+      const response = await api.post('/expenses', data);
       return response.data;
     } catch (error) {
       throw error.response ? error.response.data : error;
@@ -110,29 +104,29 @@ export const ExpenseSDK = {
   },
 };
 
-export const BudgetSDK ={
-    getBudget: async()=>{
-        try{
-            const response = await api.get('/budget');
-            return response.data;
-        }catch(error){
-            throw error.response ? error.response.data : error;
-        }
-    },
-    updateBudget: async(amount)=>{
-        try{
-            const response = await api.put('/budget',{amount});
-            return response.data;
-        }catch(error){
-            throw error.response ? error.response.data : error;
-        }
-    },
-    setBudget: async(amount)=>{
-        try{
-            const response = await api.post('/budget',{amount});
-            return response.data;
-        }catch(error){
-            throw error.response ? error.response.data : error;
-        }
-    },
-}
+export const BudgetSDK = {
+  getBudget: async () => {
+    try {
+      const response = await api.get('/budget');
+      return response.data;
+    } catch (error) {
+      throw error.response ? error.response.data : error;
+    }
+  },
+  updateBudget: async (amount) => {
+    try {
+      const response = await api.put('/budget', { amount });
+      return response.data;
+    } catch (error) {
+      throw error.response ? error.response.data : error;
+    }
+  },
+  setBudget: async (amount) => {
+    try {
+      const response = await api.post('/budget', { amount });
+      return response.data;
+    } catch (error) {
+      throw error.response ? error.response.data : error;
+    }
+  },
+};

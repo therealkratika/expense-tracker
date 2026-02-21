@@ -1,4 +1,6 @@
+import React from "react";
 import { useState } from "react";
+import { AuthSDK } from "../api/sdk.js";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext.jsx";
 import "./Navigation.css";
@@ -15,9 +17,13 @@ export default function Navigation() {
     { path: "/budget", label: "Budget" },
   ];
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await AuthSDK.logout();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
   };
 
   return (

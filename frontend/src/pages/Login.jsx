@@ -1,32 +1,18 @@
-import { useState } from "react";
+import React from "react";
 import { useNavigate, Link } from "react-router-dom";
+import {set, useForm} from "react-hook-form";
 import { AuthSDK } from "../api/sdk.js";
-import { useUser } from "../context/userContext.jsx";
 import "./Login.css";
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useUser();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const{ register, handleSubmit,setError, formState: { errors, isSubmitting } } = useForm();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
+  const onSubmit = async (data) => {
     try {
-     const user = await AuthSDK.login(email, password);       
-navigate("/dashboard",{replace: true});  
-
-
+     await AuthSDK.login(data.email, data.password);       
+     navigate("/dashboard",{replace: true});  
     } catch (err) {
-      setError(
-        err.message || "Invalid email or password"
-      );
-    } finally {
-      setLoading(false);
+      setError("email", { message: err.message|| "Invalid email or password" });
     }
   };
 
@@ -37,16 +23,16 @@ navigate("/dashboard",{replace: true});
           <h2>Welcome back</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
           <div className="field">
             <label>Email</label>
             <input
               type="email"
               placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              {...register("email", { required: "Email is required" })}
             />
+            
+          {errors.email && <p className="auth-error">{errors.email.message}</p>}
           </div>
 
           <div className="field">
@@ -54,13 +40,10 @@ navigate("/dashboard",{replace: true});
             <input
               type="password"
               placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              {...register("password", { required: "Password is required" })}
             />
           </div>
-
-          {error && <p className="auth-error">{error}</p>}
+          {errors.password && <p className="auth-error">{errors.password.message}</p>}
 
           <p
             className="forgot-link"
@@ -72,9 +55,9 @@ navigate("/dashboard",{replace: true});
           <button
             type="submit"
             className="primary-btn"
-            disabled={loading}
+            disabled={isSubmitting}
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {isSubmitting ? "Signing in..." : "Sign In"}
           </button>
         </form>
 

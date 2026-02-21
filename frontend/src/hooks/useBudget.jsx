@@ -1,9 +1,10 @@
+
 import { useEffect, useState } from "react";
 import { BudgetSDK } from "../api/sdk";
 
 export function useBudget() {
   const [budget, setBudget] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   const fetchBudget = async () => {
     setLoading(true)

@@ -1,87 +1,114 @@
-import { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthSDK } from "../api/sdk";
+
 export default function Signup() {
   const navigate = useNavigate();
-  //const { login } = useUser(); 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting }
+  } = useForm();
 
-  const handleSubmit = async (e) => {
-   e.preventDefault();
-  setError("");
-  if(password != confirmPassword) {
-    setError("Passwords do not match");
-    return;
-  }
-  setLoading(true);
-  try {
-    await AuthSDK.signup(name,email, password);
-    navigate("/login");
-  } catch (err) {
-    setError(err.message || "Signup failed");
-  } finally {
-    setLoading(false);
-  }
-};
+  const onSubmit = async (data) => {
+    // password match check
+    if (data.password !== data.confirmPassword) {
+      setError("confirmPassword", {
+        message: "Passwords do not match"
+      });
+      return;
+    }
+
+    try {
+      await AuthSDK.signup(data.name, data.email, data.password);
+      navigate("/login");
+    } catch (err) {
+      setError("root", {
+        message: err.message || "Signup failed"
+      });
+    }
+  };
+
   return (
+
     <div className="auth-wrapper">
       <div className="auth-card">
         <div className="auth-header">
           <h2>Create your account to start</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
+
           <div className="field">
             <label>Your name</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
+              {...register("name", { required: "Name is required" })}
             />
+            {errors.name && (
+              <p className="auth-error">{errors.name.message}</p>
+            )}
           </div>
 
           <div className="field">
             <label>Email</label>
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: "Enter a valid email"
+                }
+              })}
             />
+            {errors.email && (
+              <p className="auth-error">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="field">
             <label>Password</label>
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters"
+                }
+              })}
             />
+            {errors.password && (
+              <p className="auth-error">{errors.password.message}</p>
+            )}
           </div>
           <div className="field">
             <label>Confirm Password</label>
             <input
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
+              {...register("confirmPassword", {
+                required: "Please confirm your password"
+              })}
             />
+            {errors.confirmPassword && (
+              <p className="auth-error">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
-          {error && <p className="auth-error">{error}</p>}
+          {errors.root && (
+            <p className="auth-error">{errors.root.message}</p>
+          )}
 
           <button
             type="submit"
             className="primary-btn"
-            disabled={loading}
+            disabled={isSubmitting}
           >
-            {loading ? "Creating account..." : "Create Account"}
+            {isSubmitting ? "Creating account..." : "Create Account"}
           </button>
         </form>
 
