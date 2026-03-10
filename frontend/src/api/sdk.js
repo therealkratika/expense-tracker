@@ -29,29 +29,34 @@ export const AuthSDK = {
   },
 
   login: async (email, password) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(
+  try {
+    const userCredential = await signInWithEmailAndPassword(
         auth,
-        email,
-        password
-      );
+      email,
+      password
+    );
 
-      const user = userCredential.user;
-      await user.getIdToken(true); 
+    const user = userCredential.user;
 
-      if (!user.emailVerified) {
-        await signOut(auth);
-        throw new Error('Please verify your email before logging in');
-      }
-      return {
-        uid: user.uid,
-        email: user.email,
-        name: user.displayName,
-      };
-    } catch (error) {
-      throw new Error(error.message);
+    const token = await user.getIdToken(); // get token
+
+    if (!user.emailVerified) {
+      await signOut(auth);
+      throw new Error("Please verify your email before logging in");
     }
-  },
+
+    localStorage.setItem("token", token);
+
+    return {
+      uid: user.uid,
+      email: user.email,
+      name: user.displayName,
+    };
+
+  } catch (error) {
+    throw new Error(error.message);
+  }
+},
   logout: async () => {
     await signOut(auth);
   },
