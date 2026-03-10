@@ -7,6 +7,8 @@ import Dashboard from "./pages/Dashboard";
 import Navigation from "./components/Navigation.jsx";
 import Expenses from "./pages/Expenses";
 import Budget from "./pages/Budget.jsx";
+import ForgotPassword from "./pages/forgotPassword.jsx";
+
 export default function App() {
   function PrivateRoute({ children }) {
   const { user } = useUser();
@@ -22,6 +24,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+          
+<Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/dashboard" element={<PrivateRoute> <Navigation/><Dashboard/></PrivateRoute>}/>
           <Route path="/expenses" element={<PrivateRoute> <Navigation/><Expenses/></PrivateRoute>}/>
           <Route path="/budget" element={<PrivateRoute> <Navigation/><Budget/></PrivateRoute>}/>
