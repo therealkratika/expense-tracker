@@ -2,7 +2,7 @@ import axios from 'axios';
 import { auth } from '../firebase';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: 'https://expense-tracker-4v4b.onrender.com',
 });
 
 api.interceptors.request.use(async (config) => {
