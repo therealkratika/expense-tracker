@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://expense-tracker-1-e7lf.onrender.com',
     credentials: true,
   })
 );
