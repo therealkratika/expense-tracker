@@ -29,7 +29,7 @@ export default function ExpenseModal({ isOpen, onClose, onSave, transaction }) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   const numAmount = parseFloat(amount);
@@ -39,7 +39,7 @@ export default function ExpenseModal({ isOpen, onClose, onSave, transaction }) {
     setLoading(true);
 
     await onSave({
-      amount: type === "expense" ? numAmount: -numAmount,
+      amount: type === "expense" ? numAmount : -numAmount,
       category,
       date,
       description,
@@ -52,8 +52,7 @@ export default function ExpenseModal({ isOpen, onClose, onSave, transaction }) {
   }
 };
 
-
-  return (
+return (
     <div className="modal-overlay">
       <div className="modal">
         <h2>{transaction ? "Edit Transaction" : "Add Expense"}</h2>
