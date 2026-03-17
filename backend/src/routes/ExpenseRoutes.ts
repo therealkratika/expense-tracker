@@ -1,13 +1,13 @@
-import express from "express";
-import authMiddleware from "../middleware/AuthMiddleware.js";
+import express, { Router } from 'express';
+import authMiddleware from '../middleware/AuthMiddleware';
 import {
   getExpenses,
   addExpense,
   deleteExpense,
   updateExpense
-} from "../controller/ExpenseController.js";
+} from '../controller/ExpenseController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.use(authMiddleware);
 
