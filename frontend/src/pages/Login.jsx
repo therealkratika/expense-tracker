@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
-import {set, useForm} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import { AuthSDK } from "../api/sdk.js";
 import "./Login.css";
 export default function Login() {

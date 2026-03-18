@@ -28,7 +28,7 @@ export default function Signup() {
     }
   };
   return (
-    <div className="auth-wrapper">
+  <div className="auth-wrapper">
       <div className="auth-card">
         <div className="auth-header">
           <h2>Create your account to start</h2>

@@ -38,7 +38,7 @@ export const AuthSDK = {
 
     const user = userCredential.user;
 
-    const token = await user.getIdToken(); // get token
+    const token = await user.getIdToken(); 
 
     if (!user.emailVerified) {
       await signOut(auth);

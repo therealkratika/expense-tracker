@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import process from 'process';
@@ -7,7 +7,7 @@ import budgetRoutes from './src/routes/BudgetRouter';
 
 dotenv.config();
 
-const app: Application = express();
+const app = express();
 
 app.use(
   cors({
