@@ -14,8 +14,6 @@ export default function Dashboard() {
     dispatch(fetchExpenses());
     dispatch(fetchBudget());
   }, [dispatch]);
-
-  // Robust Number Calculations
   const totalIncome = transactions
     .filter(t => t.type === "income")
     .reduce((sum, t) => sum + Number(Math.abs(t.amount || 0)), 0);

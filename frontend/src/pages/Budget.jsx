@@ -43,7 +43,7 @@ export default function Budget() {
       <h1>Budget Management</h1>
       <p className="subtitle">Track and control your spending</p>
       <div className="card">
-        <h3>Monthly Budget</h3>
+        <h3 className="card-title">Monthly Budget</h3>
         {editing ? (
           <>
             <input

@@ -8,10 +8,6 @@ export const store = configureStore({
     auth: authReducer,
     expenses: expenseReducer,
     budget: budgetReducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
+  }
 });
 export default store;
