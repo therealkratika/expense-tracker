@@ -14,10 +14,6 @@ export default function App() {
   const { user } = useUser();
   return user ? children : <Navigate to="/login" replace />;
 }
-// function PublicRoute({children}){
-//   const {user} = useUser();
-//   if(!user) return children;
-// }
   return (
     <UserProvider>
       <BrowserRouter>

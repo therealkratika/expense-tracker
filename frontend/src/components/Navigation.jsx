@@ -1,14 +1,15 @@
-import React from "react";
-import { useState } from "react";
-import { AuthSDK } from "../api/sdk.js";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useUser } from "../context/userContext.jsx";
+import { useSelector, useDispatch } from "react-redux"; // Redux hooks
+import { logout } from "../features/authSlice"; // Import logout action
+import { AuthSDK } from "../api/sdk.js";
 import "./Navigation.css";
 
 export default function Navigation() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useUser();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
   const [open, setOpen] = useState(false);
 
   const navItems = [
@@ -20,6 +21,9 @@ export default function Navigation() {
   const handleLogout = async () => {
     try {
       await AuthSDK.logout();
+      
+      dispatch(logout());
+      
       navigate("/login");
     } catch (err) {
       console.error("Logout error:", err);
@@ -47,17 +51,18 @@ export default function Navigation() {
           ))}
         </div>
       </div>
+
       <div className="nav-right">
         <div
           className="user-info"
           onClick={() => setOpen((prev) => !prev)}
         >
           <div className="avatar">
-            {user?.name?.charAt(0)?.toUpperCase()}
+            {user?.name?.charAt(0)?.toUpperCase() || "U"}
           </div>
 
           <div className="user-details">
-            <span className="name">{user?.name}</span>
+            <span className="name">{user?.name || "User"}</span>
             <span className="email">{user?.email}</span>
           </div>
         </div>

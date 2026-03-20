@@ -1,21 +1,25 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
-import {useForm} from "react-hook-form";
-import { AuthSDK } from "../api/sdk.js";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import "./Login.css";
+import { LoginUser } from "../features/authSlice";
+
 export default function Login() {
   const navigate = useNavigate();
-  const{ register, handleSubmit,setError, formState: { errors, isSubmitting } } = useForm();
+  const dispatch = useDispatch();
+  const { error: serverError } = useSelector((state) => state.auth);
+
+  const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm();
 
   const onSubmit = async (data) => {
     try {
-     await AuthSDK.login(data.email, data.password);       
-     navigate("/dashboard",{replace: true});  
+      await dispatch(LoginUser({ email: data.email, password: data.password })).unwrap();
+      navigate("/dashboard", { replace: true });
     } catch (err) {
-      setError("email", { message: err.message|| "Invalid email or password" });
+      setError("email", { message: err });
     }
   };
-
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
@@ -31,8 +35,7 @@ export default function Login() {
               placeholder="you@example.com"
               {...register("email", { required: "Email is required" })}
             />
-            
-          {errors.email && <p className="auth-error">{errors.email.message}</p>}
+            {errors.email && <p className="auth-error">{errors.email.message}</p>}
           </div>
 
           <div className="field">
@@ -42,21 +45,15 @@ export default function Login() {
               placeholder="••••••••"
               {...register("password", { required: "Password is required" })}
             />
+            {errors.password && <p className="auth-error">{errors.password.message}</p>}
           </div>
-          {errors.password && <p className="auth-error">{errors.password.message}</p>}
 
-          <p
-            className="forgot-link"
-            onClick={() => navigate("/forgot-password")}
-          >
+          <p className="forgot-link" onClick={() => navigate("/forgot-password")}>
             Forgot password?
           </p>
+          {serverError && !errors.email && <p className="auth-error center">{serverError}</p>}
 
-          <button
-            type="submit"
-            className="primary-btn"
-            disabled={isSubmitting}
-          >
+          <button type="submit" className="primary-btn" disabled={isSubmitting}>
             {isSubmitting ? "Signing in..." : "Sign In"}
           </button>
         </form>

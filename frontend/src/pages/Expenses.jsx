@@ -1,68 +1,45 @@
-import React from "react";
-import { useState} from "react";
-import { useExpenses } from "../hooks/useExpenses";
+import React, { useEffect, useState, useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { 
+  fetchExpenses, 
+  addExpense, 
+  updateExpense, 
+  deleteExpense 
+} from "../features/expenseSlice";
 import ExpenseModal from "../components/ExpenseModal";
 import TransactionList from "../components/Transaction";
-import { useMemo } from "react";
 import "./Expenses.css";
 
 export default function Expenses() {
-  const {
-    expenses,
-    loading,
-    error,
-    addExpense,
-    updateExpense,
-    deleteExpense,
-  } = useExpenses();
+  const dispatch = useDispatch();
+  
+  const { items: expenses, loading, error } = useSelector((state) => state.expenses);
 
   const [category, setCategory] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
 
-const filteredTransactions = useMemo(() => {
-  let filtered = [...expenses];
+  useEffect(() => {
+    dispatch(fetchExpenses());
+  }, [dispatch]);
 
-  if (category !== "all") {
-    filtered = filtered.filter(t => t.category === category);
-  }
-
-  if (dateFrom) {
-    filtered = filtered.filter(
-      t => new Date(t.date) >= new Date(dateFrom)
-    );
-  }
-
-  if (dateTo) {
-    filtered = filtered.filter(
-      t => new Date(t.date) <= new Date(dateTo)
-    );
-  }
-
-  return filtered;
-}, [expenses, category, dateFrom, dateTo]);
-
-  const openAddModal = () => {
-    setEditingTransaction(null);
-    setIsModalOpen(true);
-  };
-
-  const openEditModal = (txn) => {
-    setEditingTransaction(txn);
-    setIsModalOpen(true);
-  };
+  const filteredTransactions = useMemo(() => {
+    let filtered = [...expenses];
+    if (category !== "all") filtered = filtered.filter(t => t.category === category);
+    if (dateFrom) filtered = filtered.filter(t => new Date(t.date) >= new Date(dateFrom));
+    if (dateTo) filtered = filtered.filter(t => new Date(t.date) <= new Date(dateTo));
+    return filtered;
+  }, [expenses, category, dateFrom, dateTo]);
 
   const handleSaveExpense = async (data) => {
     try {
       if (editingTransaction) {
-        await updateExpense(editingTransaction.id, data);
+        await dispatch(updateExpense({ id: editingTransaction.id, data })).unwrap();
       } else {
-        await addExpense(data);
+        await dispatch(addExpense(data)).unwrap();
       }
-
       setIsModalOpen(false);
       setEditingTransaction(null);
     } catch {
@@ -70,97 +47,34 @@ const filteredTransactions = useMemo(() => {
     }
   };
 
-  if (loading) {
-    return <p style={{ padding: "30px" }}>Loading expenses...</p>;
-  }
+  const handleDelete = (id) => {
+    if (window.confirm("Delete this transaction?")) {
+      dispatch(deleteExpense(id));
+    }
+  };
 
-  if (error) {
-    return <p style={{ padding: "30px", color: "red" }}>{error}</p>;
-  }
+  if (loading) return <p style={{ padding: "30px" }}>Loading expenses...</p>;
+  if (error) return <p style={{ padding: "30px", color: "red" }}>{error}</p>;
 
   return (
     <div className="expenses">
-      <div className="expenses-header">
-        <div>
-          <h1 className="expenses-title">Expenses</h1>
-          <p className="expenses-subtitle">
-            Manage and track your expenses
-          </p>
-        </div>
-
-        <button className="add-btn" onClick={openAddModal}>
-          + Add Expense
-        </button>
-      </div>
-
-      <div className="filters">
-        <div>
-          <label>Category</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="all">All</option>
-            <option value="Food">Food</option>
-            <option value="Rent">Rent</option>
-            <option value="Transport">Transport</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div>
-          <label>From</label>
-          <input
-            type="date"
-            value={dateFrom}
-            onChange={(e) => setDateFrom(e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label>To</label>
-          <input
-            type="date"
-            value={dateTo}
-            onChange={(e) => setDateTo(e.target.value)}
-          />
-        </div>
-
-        <button
-          className="clear-btn"
-          onClick={() => {
-            setCategory("all");
-            setDateFrom("");
-            setDateTo("");
-          }}
-        >
-          Clear Filters
-        </button>
-      </div>
-
+      
       <div className="expenses-card">
-        <h3>
-          Transactions ({filteredTransactions.length})
-        </h3>
-
+        <h3>Transactions ({filteredTransactions.length})</h3>
         {filteredTransactions.length === 0 ? (
           <p className="empty">No transactions found</p>
         ) : (
           <TransactionList
             transactions={filteredTransactions}
-            onEdit={openEditModal}
-            onDelete={deleteExpense}
+            onEdit={(txn) => { setEditingTransaction(txn); setIsModalOpen(true); }}
+            onDelete={handleDelete}
           />
         )}
       </div>
 
       <ExpenseModal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingTransaction(null);
-        }}
+        onClose={() => { setIsModalOpen(false); setEditingTransaction(null); }}
         onSave={handleSaveExpense}
         transaction={editingTransaction}
       />
