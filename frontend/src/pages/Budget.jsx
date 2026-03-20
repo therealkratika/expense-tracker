@@ -33,7 +33,7 @@ export default function Budget() {
 
   const saveBudget = () => {
     const value = parseFloat(budgetInput);
-    if (isNaN(value) || value <= 0) return;
+    if (isNaN(value) || value < 0) return;
     dispatch(updateBudgetLimit(value));
     setEditing(false);
   };
