@@ -7,7 +7,6 @@ import {
   signOut,
 } from 'firebase/auth';
 import { auth } from '../firebase';
-
 export const AuthSDK = {
   signup: async (name, email, password) => {
     try {
@@ -27,36 +26,30 @@ export const AuthSDK = {
       throw new Error(error.message);
     }
   },
-
   login: async (email, password) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(
+    try {
+      const userCredential = await signInWithEmailAndPassword(
         auth,
-      email,
-      password
-    );
+        email,
+        password
+      );
+      const user = userCredential.user;
+      const token = await user.getIdToken();
+      if (!user.emailVerified) {
+        await signOut(auth);
+        throw new Error('Please verify your email before logging in');
+      }
+      localStorage.setItem('token', token);
 
-    const user = userCredential.user;
-
-    const token = await user.getIdToken(); 
-
-    if (!user.emailVerified) {
-      await signOut(auth);
-      throw new Error("Please verify your email before logging in");
+      return {
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName,
+      };
+    } catch (error) {
+      throw new Error(error.message);
     }
-
-    localStorage.setItem("token", token);
-
-    return {
-      uid: user.uid,
-      email: user.email,
-      name: user.displayName,
-    };
-
-  } catch (error) {
-    throw new Error(error.message);
-  }
-},
+  },
   logout: async () => {
     await signOut(auth);
   },

@@ -32,7 +32,7 @@ export default function Budget() {
   const dailyBudget = remaining > 0 && daysRemaining > 0 ? remaining / daysRemaining : 0;
 
   const saveBudget = () => {
-    const value = parseFloat(budgetInput);
+    const value = budgetInput === "" ? 0 : parseFloat(budgetInput);
     if (isNaN(value) || value < 0) return;
     dispatch(updateBudgetLimit(value));
     setEditing(false);
