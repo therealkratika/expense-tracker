@@ -58,14 +58,25 @@ export default function Expenses() {
 
   return (
     <div className="expenses">
-       <ExpenseModal
+      <ExpenseModal
         isOpen={isModalOpen}
         onClose={() => { setIsModalOpen(false); setEditingTransaction(null); }}
         onSave={handleSaveExpense}
         transaction={editingTransaction}
       />
+
       <div className="expenses-card">
-        <h3>Transactions ({filteredTransactions.length})</h3>
+        <div className="expenses-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h3>Transactions ({filteredTransactions.length})</h3>
+             <button 
+            className="primary-btn" 
+            onClick={() => setIsModalOpen(true)}
+            style={{ padding: '8px 16px', cursor: 'pointer' }}
+          >
+            + Add Expense
+          </button>
+        </div>
+
         {filteredTransactions.length === 0 ? (
           <p className="empty">No transactions found</p>
         ) : (
@@ -76,8 +87,6 @@ export default function Expenses() {
           />
         )}
       </div>
-
-     
     </div>
   );
 }
