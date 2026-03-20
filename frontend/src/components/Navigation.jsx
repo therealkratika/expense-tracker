@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux"; // Redux hooks
-import { logout } from "../features/authSlice"; // Import logout action
+import { useSelector, useDispatch } from "react-redux"; 
+import { logout } from "../features/authSlice"; 
 import { AuthSDK } from "../api/sdk.js";
 import "./Navigation.css";
 
@@ -33,7 +33,7 @@ export default function Navigation() {
   return (
     <nav className="nav">
       <div className="nav-left">
-        <div className="logo">💰 ExpenseTracker</div>
+        <div className="logo"> ExpenseTracker</div>
 
         <div className="nav-links">
           {navItems.map((item) => (

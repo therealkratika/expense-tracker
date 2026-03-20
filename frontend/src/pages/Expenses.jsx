@@ -58,7 +58,12 @@ export default function Expenses() {
 
   return (
     <div className="expenses">
-      
+       <ExpenseModal
+        isOpen={isModalOpen}
+        onClose={() => { setIsModalOpen(false); setEditingTransaction(null); }}
+        onSave={handleSaveExpense}
+        transaction={editingTransaction}
+      />
       <div className="expenses-card">
         <h3>Transactions ({filteredTransactions.length})</h3>
         {filteredTransactions.length === 0 ? (
@@ -72,12 +77,7 @@ export default function Expenses() {
         )}
       </div>
 
-      <ExpenseModal
-        isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); setEditingTransaction(null); }}
-        onSave={handleSaveExpense}
-        transaction={editingTransaction}
-      />
+     
     </div>
   );
 }
