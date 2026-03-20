@@ -21,9 +21,7 @@ export default function Navigation() {
   const handleLogout = async () => {
     try {
       await AuthSDK.logout();
-      
       dispatch(logout());
-      
       navigate("/login");
     } catch (err) {
       console.error("Logout error:", err);
@@ -62,8 +60,9 @@ export default function Navigation() {
           </div>
 
           <div className="user-details">
-            <span className="email">{user?.email}</span>
-          </div>
+  <span className="name">{typeof user?.name === 'string' ? user.name : "Kritika"}</span>
+  <span className="email">{typeof user?.email === 'string' ? user.email : ""}</span>
+</div>
         </div>
         <div className={`profile-dropdown ${open ? "active" : ""}`}>
           <div className="profile-info">

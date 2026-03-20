@@ -37,7 +37,6 @@ const handleSubmit = async (e) => {
 
   try {
     setLoading(true);
-
     await onSave({
       amount: type === "expense" ? numAmount : -numAmount,
       category,

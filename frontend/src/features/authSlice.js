@@ -52,13 +52,17 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+      // Inside authSlice.js
       .addCase(LoginUser.fulfilled, (state, action) => {
         state.loading = false;
+        // Ensure action.payload is the user object {name, email}, NOT the whole response
         state.user = action.payload.user || action.payload;
+        state.error = null;
       })
       .addCase(LoginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.user = null; // IMPORTANT: Reset user to null on error
+        state.error = action.payload; // Store the error string here, NOT in state.user
       });
   },
 });
