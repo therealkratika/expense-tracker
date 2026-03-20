@@ -62,7 +62,6 @@ export default function Navigation() {
           </div>
 
           <div className="user-details">
-            <span className="name">{user?.name || "User"}</span>
             <span className="email">{user?.email}</span>
           </div>
         </div>

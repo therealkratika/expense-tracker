@@ -42,8 +42,6 @@ export default function Budget() {
     <div className="budget">
       <h1>Budget Management</h1>
       <p className="subtitle">Track and control your spending</p>
-
-      {/* Monthly Budget Card */}
       <div className="card">
         <h3>Monthly Budget</h3>
         {editing ? (
@@ -67,8 +65,6 @@ export default function Budget() {
           </>
         )}
       </div>
-
-      {/* Budget Status Card */}
       <div className="card">
         <h3>Budget Status</h3>
         <div className="progress">
@@ -89,8 +85,6 @@ export default function Budget() {
           </div>
         </div>
       </div>
-
-      {/* Daily Budget Card */}
       <div className="card">
         <h3>Daily Budget</h3>
         <p className="big">₹ {dailyBudget.toFixed(2)}</p>
