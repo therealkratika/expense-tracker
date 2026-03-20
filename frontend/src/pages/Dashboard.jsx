@@ -7,93 +7,67 @@ import "./Dashboard.css";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
-  const { items: transactions, loading: expensesLoading, error: expenseError } = useSelector((state) => state.expenses);
+  const { items: transactions, loading: expensesLoading } = useSelector((state) => state.expenses);
   const { amount: monthlyBudget, loading: budgetLoading } = useSelector((state) => state.budget);
+
   useEffect(() => {
     dispatch(fetchExpenses());
     dispatch(fetchBudget());
   }, [dispatch]);
+
+  // Robust Number Calculations
   const totalIncome = transactions
     .filter(t => t.type === "income")
-    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    .reduce((sum, t) => sum + Number(Math.abs(t.amount || 0)), 0);
 
-  const totalBudget = Number(totalIncome) + Number(monthlyBudget);
   const totalExpenses = transactions
     .filter(t => t.type === "expense")
-    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    .reduce((sum, t) => sum + Number(Math.abs(t.amount || 0)), 0);
 
-  const balance = totalBudget - totalExpenses;
-  const budgetUsed = monthlyBudget > 0 
-    ? Math.min((totalExpenses / monthlyBudget) * 100, 100) 
+  const budgetNum = Number(monthlyBudget || 0);
+  const balance = (totalIncome + budgetNum) - totalExpenses;
+  
+  const budgetUsedPercent = budgetNum > 0 
+    ? Math.min((totalExpenses / budgetNum) * 100, 100) 
     : 0;
-  if (expensesLoading || budgetLoading) {
-    return <p style={{ padding: "30px" }}>Loading dashboard...</p>;
-  }
 
-  if (expenseError) {
-    return <p style={{ padding: "30px", color: "red" }}>{expenseError}</p>;
-  }
+  if (expensesLoading || budgetLoading) return <p className="loading">Updating data...</p>;
 
   return (
     <div className="dashboard">
-      <h1 className="dashboard-title">Dashboard</h1>
-      
       <div className="cards">
         <div className="card balance">
           <h3>Total Balance</h3>
-          <p>₹ {balance}</p>
+          <p>₹ {balance.toLocaleString()}</p>
         </div>
-
         <div className="card income">
           <h3>Transactional Income</h3>
-          <p>₹ {totalIncome}</p>
+          <p>₹ {totalIncome.toLocaleString()}</p>
         </div>
-
         <div className="card expense">
           <h3>Monthly Expenses</h3>
-          <p>₹ {totalExpenses}</p>
+          <p>₹ {totalExpenses.toLocaleString()}</p>
         </div>
       </div>
 
-      <div className="budget-card">
+      <div className="budget-section">
         <h3>Budget Overview</h3>
-        {monthlyBudget > 0 ? (
-          <>
-            <p>₹ {totalExpenses} used of ₹ {monthlyBudget}</p>
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${budgetUsed}%` }}
-              />
-            </div>
-            <p className="budget-text">{budgetUsed.toFixed(1)}% used</p>
-          </>
-        ) : (
-          <p className="budget-text">No budget set yet. Go to Budget page.</p>
-        )}
+        <div className="progress-container">
+           <div className="progress-bar">
+             <div 
+               className="progress-fill" 
+               style={{ 
+                 width: `${budgetUsedPercent}%`,
+                 backgroundColor: budgetUsedPercent > 90 ? '#ff4d4d' : '#6366f1' 
+               }}
+             ></div>
+           </div>
+           <p>{budgetUsedPercent.toFixed(1)}% of your ₹{budgetNum} budget used</p>
+        </div>
       </div>
 
-      <div className="chart-section">
-        <h3>Spending by Category</h3>
+      <div className="chart-container">
         <ExpensePieChart transactions={transactions} />
-      </div>
-
-      <div className="transactions">
-        <h3>Recent Transactions</h3>
-        {transactions.length === 0 ? (
-          <p className="empty">No transactions yet</p>
-        ) : (
-          <ul>
-            {transactions.slice(0, 5).map(txn => (
-              <li key={txn.id} className={txn.type}>
-                <span>{txn.category}</span>
-                <span>
-                  {txn.type === "expense" ? "-" : "+"}₹ {Math.abs(txn.amount)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </div>
   );

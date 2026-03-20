@@ -1,20 +1,15 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { 
-  fetchExpenses, 
-  addExpense, 
-  updateExpense, 
-  deleteExpense 
-} from "../features/expenseSlice";
+import { fetchExpenses, addExpense, updateExpense, deleteExpense } from "../features/expenseSlice";
 import ExpenseModal from "../components/ExpenseModal";
 import TransactionList from "../components/Transaction";
 import "./Expenses.css";
 
 export default function Expenses() {
   const dispatch = useDispatch();
-  
   const { items: expenses, loading, error } = useSelector((state) => state.expenses);
 
+  // Filter States
   const [category, setCategory] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -25,6 +20,7 @@ export default function Expenses() {
     dispatch(fetchExpenses());
   }, [dispatch]);
 
+  // This logic only works if the UI below has the <select> and <input> tags!
   const filteredTransactions = useMemo(() => {
     let filtered = [...expenses];
     if (category !== "all") filtered = filtered.filter(t => t.category === category);
@@ -53,27 +49,46 @@ export default function Expenses() {
     }
   };
 
-  if (loading) return <p style={{ padding: "30px" }}>Loading expenses...</p>;
-  if (error) return <p style={{ padding: "30px", color: "red" }}>{error}</p>;
+  if (loading) return <p className="status-msg">Loading expenses...</p>;
+  if (error) return <p className="status-msg error">{error}</p>;
 
   return (
     <div className="expenses">
-      <div className="expenses-card">
-        <ExpenseModal
+      <ExpenseModal
         isOpen={isModalOpen}
         onClose={() => { setIsModalOpen(false); setEditingTransaction(null); }}
         onSave={handleSaveExpense}
         transaction={editingTransaction}
       />
-        <div className="expenses-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+
+      <div className="expenses-card">
+        <div className="expenses-header">
           <h3>Transactions ({filteredTransactions.length})</h3>
-             <button 
-            className="primary-btn" 
-            onClick={() => setIsModalOpen(true)}
-            style={{ padding: '8px 16px', cursor: 'pointer' }}
-          >
+          <button className="primary-btn" onClick={() => setIsModalOpen(true)}>
             + Add Expense
           </button>
+        </div>
+
+        {/* --- CRITICAL: THE FILTER UI --- */}
+        <div className="filter-container">
+          <select 
+            className="filter-select"
+            value={category} 
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="all">All Categories</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Rent">Rent</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Health">Health</option>
+          </select>
+
+          <div className="date-group">
+            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+            <span>to</span>
+            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+          </div>
         </div>
 
         {filteredTransactions.length === 0 ? (
@@ -86,7 +101,6 @@ export default function Expenses() {
           />
         )}
       </div>
-      
     </div>
   );
 }
