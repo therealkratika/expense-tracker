@@ -13,11 +13,12 @@ import "./Expenses.css";
 export default function Expenses() {
   const dispatch = useDispatch();
 
-  const { items: expenses = [], loading, error } = useSelector(
-    (state) => state.expenses
-  );
+  // ✅ NEVER undefined
+  const state = useSelector((state) => state.expenses);
+  const expenses = state?.items ?? [];
+  const loading = state?.loading ?? false;
+  const error = state?.error ?? null;
 
-  // Filter States
   const [category, setCategory] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -28,11 +29,11 @@ export default function Expenses() {
     dispatch(fetchExpenses());
   }, [dispatch]);
 
-  // ✅ SAFE FILTER LOGIC
+  // ✅ SAFE FILTER
   const filteredTransactions = useMemo(() => {
-    if (!expenses || !Array.isArray(expenses)) return [];
+    if (!Array.isArray(expenses)) return [];
 
-    let filtered = [...expenses];
+    let filtered = expenses;
 
     if (category !== "all") {
       filtered = filtered.filter((t) => t.category === category);
@@ -53,7 +54,6 @@ export default function Expenses() {
     return filtered;
   }, [expenses, category, dateFrom, dateTo]);
 
-  // ✅ SAVE HANDLER
   const handleSaveExpense = async (data) => {
     try {
       if (editingTransaction) {
@@ -72,19 +72,17 @@ export default function Expenses() {
     }
   };
 
-  // ✅ DELETE HANDLER
   const handleDelete = (id) => {
     if (window.confirm("Delete this transaction?")) {
       dispatch(deleteExpense(id));
     }
   };
 
-  // ✅ LOADING + ERROR STATES
-  if (loading) return <p className="status-msg">Loading expenses...</p>;
-  if (error) return <p className="status-msg error">{error}</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
-    <div className="expenses">
+    <div>
       <ExpenseModal
         isOpen={isModalOpen}
         onClose={() => {
@@ -95,61 +93,24 @@ export default function Expenses() {
         transaction={editingTransaction}
       />
 
-      <div className="expenses-card">
-        <div className="expenses-header">
-          <h3>Transactions ({filteredTransactions.length})</h3>
-          <button
-            className="primary-btn"
-            onClick={() => setIsModalOpen(true)}
-          >
-            + Add Expense
-          </button>
-        </div>
+      <h3>Transactions ({filteredTransactions.length})</h3>
 
-        {/* FILTER UI */}
-        <div className="filter-container">
-          <select
-            className="filter-select"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="all">All Categories</option>
-            <option value="Food">Food</option>
-            <option value="Transport">Transport</option>
-            <option value="Rent">Rent</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Health">Health</option>
-          </select>
+      <button onClick={() => setIsModalOpen(true)}>
+        + Add Expense
+      </button>
 
-          <div className="date-group">
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-            />
-            <span>to</span>
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* TRANSACTION LIST */}
-        {filteredTransactions.length === 0 ? (
-          <p className="empty">No transactions found</p>
-        ) : (
-          <TransactionList
-            transactions={filteredTransactions}
-            onEdit={(txn) => {
-              setEditingTransaction(txn);
-              setIsModalOpen(true);
-            }}
-            onDelete={handleDelete}
-          />
-        )}
-      </div>
+      {filteredTransactions.length === 0 ? (
+        <p>No transactions</p>
+      ) : (
+        <TransactionList
+          transactions={filteredTransactions}
+          onEdit={(txn) => {
+            setEditingTransaction(txn);
+            setIsModalOpen(true);
+          }}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 }
