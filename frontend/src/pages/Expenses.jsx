@@ -78,7 +78,7 @@ export default function Expenses() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
- return (
+return (
   <div className="expenses">
     <ExpenseModal
       isOpen={isModalOpen}
@@ -98,7 +98,7 @@ export default function Expenses() {
       </p>
     </div>
 
-    {/* ✅ FILTERS (FIXED CLASS NAMES) */}
+    {/* FILTERS */}
     <div className="filters">
       <div className="filter-group">
         <label>Category</label>
@@ -133,7 +133,6 @@ export default function Expenses() {
         />
       </div>
 
-      {/* CLEAR BUTTON */}
       <button
         className="clear-btn"
         onClick={() => {
@@ -148,12 +147,20 @@ export default function Expenses() {
 
     {/* CARD */}
     <div className="expenses-card">
-      <h3>Transactions ({filteredTransactions.length})</h3>
+      
+      {/* HEADER ROW (NEW 🔥) */}
+      <div className="expenses-header-row">
+        <h3>Transactions ({filteredTransactions.length})</h3>
 
-      <button onClick={() => setIsModalOpen(true)}>
-        + Add Expense
-      </button>
+        <button
+          className="add-btn"
+          onClick={() => setIsModalOpen(true)}
+        >
+          + Add Expense
+        </button>
+      </div>
 
+      {/* LIST */}
       {filteredTransactions.length === 0 ? (
         <div className="empty">
           <div className="empty-text">No transactions</div>
