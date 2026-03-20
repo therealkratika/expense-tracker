@@ -26,7 +26,7 @@ const expenseSchema = joi.object<ExpenseInput>({
 export const getExpenses = async (req: Request, res: Response) => {
   try {
     const result = await getExpenseByID(req.user.id);
-    return res.json(result.rows);
+    return res.json(result);
   } catch (err) {
     return res.status(500).json({ message: 'Failed to fetch expenses' });
   }
