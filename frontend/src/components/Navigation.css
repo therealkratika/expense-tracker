@@ -1,48 +1,29 @@
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* =======================
-   NAVBAR
-======================= */
+/* NAVBAR */
 .nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  padding: 0 20px;
-  height: 60px;
-
+  padding: 10px 20px;
   background: white;
   border-bottom: 1px solid #e5e7eb;
-
   position: sticky;
   top: 0;
-  z-index: 1000;
 }
 
-/* =======================
-   LEFT
-======================= */
+/* LEFT */
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
 .logo {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #4f46e5;
-  cursor: pointer;
 }
 
-/* =======================
-   LINKS
-======================= */
+/* LINKS */
 .nav-links {
   display: flex;
   gap: 10px;
@@ -52,15 +33,8 @@
   text-decoration: none;
   padding: 8px 12px;
   border-radius: 6px;
-
   color: #374151;
   font-size: 14px;
-
-  transition: 0.2s;
-}
-
-.nav-link:hover {
-  background: #f3f4f6;
 }
 
 .nav-link.active {
@@ -68,13 +42,10 @@
   color: white;
 }
 
-/* =======================
-   RIGHT
-======================= */
+/* RIGHT */
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 12px;
 }
 
 /* USER */
@@ -82,7 +53,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-
   cursor: pointer;
   position: relative;
 }
@@ -91,20 +61,18 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-
   background: #4f46e5;
   color: white;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  font-weight: 600;
 }
 
+/* ✅ FIXED TEXT */
 .user-details {
   display: flex;
   flex-direction: column;
+  line-height: 1.2;
 }
 
 .name {
@@ -117,42 +85,16 @@
   color: #6b7280;
 }
 
-/* =======================
-   LOGOUT
-======================= */
-.logout-btn {
-  background: #ef4444;
-  color: white;
-
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.logout-btn:hover {
-  background: #dc2626;
-}
-
-/* =======================
-   DROPDOWN (FIXED)
-======================= */
+/* DROPDOWN */
 .profile-dropdown {
   position: absolute;
-  top: 45px;
+  top: 50px;
   right: 0;
-
   background: white;
   border: 1px solid #e5e7eb;
-  border-radius: 10px;
-
+  border-radius: 8px;
   width: 200px;
-  padding: 12px;
-
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-
+  padding: 10px;
   display: none;
 }
 
@@ -160,64 +102,40 @@
   display: block;
 }
 
-.profile-info {
-  margin-bottom: 10px;
-}
-
 .dropdown-logout {
   width: 100%;
   background: #ef4444;
   color: white;
-
   border: none;
   padding: 8px;
   border-radius: 6px;
-
   cursor: pointer;
 }
 
-.dropdown-logout:hover {
-  background: #dc2626;
-}
-
-/* =======================
-   MOBILE
-======================= */
+/* MOBILE */
 .mobile-menu-toggle {
   display: none;
   font-size: 20px;
-  cursor: pointer;
   background: none;
   border: none;
+  cursor: pointer;
 }
 
-/* =======================
-   RESPONSIVE
-======================= */
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .nav {
     flex-wrap: wrap;
-    height: auto;
-    padding: 10px 16px;
-  }
-
-  .nav-left {
-    width: 100%;
-    justify-content: space-between;
   }
 
   .mobile-menu-toggle {
     display: block;
   }
 
-  /* NAV LINKS */
   .nav-links {
     width: 100%;
     flex-direction: column;
-    gap: 6px;
-
-    margin-top: 10px;
     display: none;
+    margin-top: 10px;
   }
 
   .nav-links.active {
@@ -227,29 +145,16 @@
   .nav-link {
     width: 100%;
     text-align: center;
-    padding: 10px;
-  }
-
-  /* RIGHT */
-  .nav-right {
-    width: 100%;
-    margin-top: 10px;
-    justify-content: space-between;
   }
 
   .user-details {
     display: none;
   }
 
-  .logout-btn {
-    width: 100%;
-  }
-
-  /* DROPDOWN FIX */
   .profile-dropdown {
     position: relative;
-    top: 0;
     width: 100%;
+    top: 0;
     margin-top: 10px;
   }
 }

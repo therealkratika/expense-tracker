@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux"; 
-import { logout } from "../features/authSlice"; 
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../features/authSlice";
 import { AuthSDK } from "../api/sdk.js";
 import "./Navigation.css";
 
 export default function Navigation() {
-  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation(); 
+
   const { user } = useSelector((state) => state.auth);
-  const [open, setOpen] = useState(false);
+
+  const [menuOpen, setMenuOpen] = useState(false); 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const navItems = [
     { path: "/dashboard", label: "Dashboard" },
@@ -31,13 +34,20 @@ export default function Navigation() {
   return (
     <nav className="nav">
       <div className="nav-left">
-        <div className="logo"> ExpenseTracker</div>
+        <div className="logo">ExpenseTracker</div>
+        <button
+          className="mobile-menu-toggle"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </button>
 
-        <div className="nav-links">
+        <div className={`nav-links ${menuOpen ? "active" : ""}`}>
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
+              onClick={() => setMenuOpen(false)} 
               className={
                 location.pathname === item.path
                   ? "nav-link active"
@@ -53,29 +63,36 @@ export default function Navigation() {
       <div className="nav-right">
         <div
           className="user-info"
-          onClick={() => setOpen((prev) => !prev)}
+          onClick={() => setDropdownOpen((prev) => !prev)}
         >
           <div className="avatar">
             {user?.name?.charAt(0)?.toUpperCase() || "U"}
           </div>
-
           <div className="user-details">
-  <span className="name">{typeof user?.name === 'string' ? user.name : "Kritika"}</span>
-  <span className="email">{typeof user?.email === 'string' ? user.email : ""}</span>
-</div>
-        </div>
-        <div className={`profile-dropdown ${open ? "active" : ""}`}>
-          <div className="profile-info">
-            <span className="info-name">{user?.name}</span>
-            <span className="info-email">{user?.email}</span>
+            <span className="name">
+              {typeof user?.name === "string" ? user.name : "Kritika"}
+            </span>
+            <span className="email">
+              {typeof user?.email === "string" ? user.email : ""}
+            </span>
           </div>
-
-          <button
-            className="dropdown-logout"
-            onClick={handleLogout}
+          <div
+            className={`profile-dropdown ${
+              dropdownOpen ? "active" : ""
+            }`}
           >
-            Logout
-          </button>
+            <div className="profile-info">
+              <span className="info-name">{user?.name}</span>
+              <span className="info-email">{user?.email}</span>
+            </div>
+
+            <button
+              className="dropdown-logout"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </div>
     </nav>
