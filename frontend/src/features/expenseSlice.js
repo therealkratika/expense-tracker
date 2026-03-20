@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ExpenseSDK } from '../api/sdk';
 export const fetchExpenses = createAsyncThunk('expenses/fetchAll', async () => {
   const response = await ExpenseSDK.getAll();
-  return response.expenses || [];
+  return response.expenses;
 });
 export const addExpense = createAsyncThunk('expense/add', async (data) => {
   const response = await ExpenseSDK.create(data);

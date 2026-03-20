@@ -68,8 +68,6 @@ export default function Expenses() {
             + Add Expense
           </button>
         </div>
-
-        {/* --- CRITICAL: THE FILTER UI --- */}
         <div className="filter-container">
           <select 
             className="filter-select"
