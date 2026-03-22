@@ -16,7 +16,6 @@ export const getExpenseByID = async (userId: string | number): Promise<ExpenseRo
     "SELECT * FROM expenses WHERE user_id=$1 ORDER BY date DESC",
     [userId]
   );
-  // Note: Changed to return all rows since the function name implies fetching the user's list
   return result.rows; 
 };
 

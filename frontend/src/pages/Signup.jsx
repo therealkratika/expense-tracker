@@ -43,7 +43,6 @@ export default function Signup() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
-          {/* Name Field */}
           <div className="field">
             <label>Your name</label>
             <input
@@ -52,8 +51,6 @@ export default function Signup() {
             />
             {errors.name && <p className="auth-error">{errors.name.message}</p>}
           </div>
-
-          {/* Email Field */}
           <div className="field">
             <label>Email</label>
             <input
@@ -65,8 +62,6 @@ export default function Signup() {
             />
             {errors.email && <p className="auth-error">{errors.email.message}</p>}
           </div>
-
-          {/* Password Field */}
           <div className="field">
             <label>Password</label>
             <input
@@ -78,8 +73,6 @@ export default function Signup() {
             />
             {errors.password && <p className="auth-error">{errors.password.message}</p>}
           </div>
-
-          {/* Confirm Password Field */}
           <div className="field">
             <label>Confirm Password</label>
             <input
@@ -90,8 +83,6 @@ export default function Signup() {
               <p className="auth-error">{errors.confirmPassword.message}</p>
             )}
           </div>
-
-          {/* Root/Server Errors */}
           {(errors.root || serverError) && (
             <p className="auth-error">{errors.root?.message || serverError}</p>
           )}
