@@ -27,8 +27,8 @@ export default function Budget() {
   const totalExpenses = expenses
     .filter(e => e.type === "expense")
     .reduce((sum, e) => sum + Math.abs(e.amount), 0);
-  const available = budget + totalIncome;
-  const remaining = available - totalExpenses;
+  const available = Number(budget) +Number(totalIncome);
+  const remaining = Number(available) - Number(totalExpenses);
   const budgetUsed = available === 0 ? 0 : (totalExpenses / available) * 100;
   const daysInMonth = new Date(
     new Date().getFullYear(),
