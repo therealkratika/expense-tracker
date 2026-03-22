@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import admin from '../../firebaseAdmin';
 import pool from '../database/db';
+import { upsertUser } from "../repository/user.repo";
 declare global {
   namespace Express {
     interface Request {
@@ -12,37 +13,35 @@ declare global {
     }
   }
 }
-
 const authMiddleware = async (
-  req: Request, 
-  res: Response, 
+  req: Request,
+  res: Response,
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader?.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'No token provided' });
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token provided" });
   }
 
-  const token = authHeader.split(' ')[1];
+  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = await admin.auth().verifyIdToken(token);
-    const result = await pool.query(
-      `INSERT INTO users (name, email, firebase_uid) 
-       VALUES ($1, $2, $3) 
-       ON CONFLICT (firebase_uid) 
-       DO UPDATE SET email = EXCLUDED.email 
-       RETURNING id, name, email`,
-      [decoded.name || 'New User', decoded.email || null, decoded.uid]
+
+    const user = await upsertUser(
+      decoded.name || "New User",
+      decoded.email || null,
+      decoded.uid
     );
-    req.user = result.rows[0];
+
+    req.user = user;
 
     next();
   } catch (err: any) {
     return res.status(401).json({
-      message: 'Authentication failed',
-      error: err.code || 'UNAUTHORIZED',
+      message: "Authentication failed",
+      error: err.code || "UNAUTHORIZED",
     });
   }
 };

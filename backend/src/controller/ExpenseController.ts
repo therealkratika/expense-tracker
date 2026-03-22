@@ -78,7 +78,6 @@ export const updateExpense = async (req: Request<{ id: string }>, res: Response)
     });
   }
 };
-
 export const deleteExpense = async (req: Request<{ id: string }>, res: Response) => {
   try {
     await deleteExpenseByID(req.params.id, req.user.id);

@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { findBudgetByID, updateBudgetByID } from '../repository/budget.repo';
-
 type BudgetUpdate = {
   amount: number;
 };
-
 const budgetSchema = Joi.object<BudgetUpdate>({
   amount: Joi.number().positive().required(),
 });

@@ -1,22 +1,17 @@
 .env
 ./backend/.env
 /node_modules
-# dependencies
+
 node_modules/
 
-# build files
 dist/
 build/
 
-# environment files
 .env
 
-# binaries / executables
 *.exe
 *.msi
 *.zip
 jdk-*
-# Firebase / GCP secrets
-# Firebase / GCP secrets
 backend/src/*firebase-adminsdk*.json
 firebase-adminsdk*.json
