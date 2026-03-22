@@ -1,13 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ExpenseSDK } from '../api/sdk';
 
-// ✅ FETCH (SAFE)
 export const fetchExpenses = createAsyncThunk('expenses/fetchAll', async () => {
   const response = await ExpenseSDK.getAll();
-
-  console.log('FETCH RESPONSE:', response); // debug
-
-  // ✅ ALWAYS RETURN ARRAY
   if (Array.isArray(response)) return response;
   if (response?.data) return response.data;
   if (response?.expenses) return response.expenses;
@@ -15,13 +10,11 @@ export const fetchExpenses = createAsyncThunk('expenses/fetchAll', async () => {
   return [];
 });
 
-// ✅ ADD
 export const addExpense = createAsyncThunk('expenses/add', async (data) => {
   const response = await ExpenseSDK.create(data);
   return response;
 });
 
-// ✅ UPDATE
 export const updateExpense = createAsyncThunk(
   'expenses/update',
   async ({ id, data }) => {
@@ -30,7 +23,6 @@ export const updateExpense = createAsyncThunk(
   }
 );
 
-// ✅ DELETE
 export const deleteExpense = createAsyncThunk('expenses/delete', async (id) => {
   await ExpenseSDK.delete(id);
   return id;

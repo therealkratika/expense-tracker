@@ -1,16 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { AuthSDK } from '../api/sdk';
-
-// 1. Lowercase naming to match your Signup.jsx imports
 export const SignupUser = createAsyncThunk(
   'auth/signup',
   async ({ name, email, password }, { rejectWithValue }) => {
     try {
       const response = await AuthSDK.signup(name, email, password);
-      // Ensure we return the user data correctly
       return response.user || response;
     } catch (err) {
-      // Use .message to ensure we pass a STRING, not an Error Object (prevents Error #31)
       return rejectWithValue(
         err.response?.data?.message || err.message || 'Signup failed'
       );
@@ -37,7 +33,6 @@ export const LoginUser = createAsyncThunk(
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    // 2. Load from localStorage so name persists on Refresh
     user: JSON.parse(localStorage.getItem('user')) || null,
     loading: false,
     error: null,
@@ -46,8 +41,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.error = null;
-      localStorage.removeItem('user'); // Clear storage on logout
-      localStorage.removeItem('token');
+      state.loading = false;
     },
     clearError: (state) => {
       state.error = null;
@@ -55,7 +49,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      /* SIGNUP CASES */
       .addCase(SignupUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -67,10 +60,8 @@ const authSlice = createSlice({
       })
       .addCase(SignupUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload; // This is now a string thanks to rejectWithValue
+        state.error = action.payload;
       })
-
-      /* LOGIN CASES */
       .addCase(LoginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -80,7 +71,6 @@ const authSlice = createSlice({
         const userData = action.payload.user || action.payload;
         state.user = userData;
         state.error = null;
-        // Save to storage
         localStorage.setItem('user', JSON.stringify(userData));
       })
       .addCase(LoginUser.rejected, (state, action) => {

@@ -25,6 +25,8 @@ export default function Navigation() {
     try {
       await AuthSDK.logout();
       dispatch(logout());
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
       navigate("/login");
     } catch (err) {
       console.error("Logout error:", err);
@@ -70,7 +72,7 @@ export default function Navigation() {
           </div>
           <div className="user-details">
             <span className="name">
-              {typeof user?.name === "string" ? user.name : "Kritika"}
+              {typeof user?.name === "string" ? user.name : "User"}
             </span>
             <span className="email">
               {typeof user?.email === "string" ? user.email : ""}

@@ -1,11 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { BudgetSDK } from '../api/sdk';
-
 export const fetchBudget = createAsyncThunk('budget/fetch', async () => {
   const response = await BudgetSDK.getBudget();
   return response?.amount || 0;
 });
-
 export const updateBudgetLimit = createAsyncThunk(
   'budget/update',
   async (amount) => {
@@ -13,7 +11,6 @@ export const updateBudgetLimit = createAsyncThunk(
     return response.amount;
   }
 );
-
 const budgetSlice = createSlice({
   name: 'budget',
   initialState: { amount: 0, loading: false },
