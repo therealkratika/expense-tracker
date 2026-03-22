@@ -89,16 +89,12 @@ return (
       onSave={handleSaveExpense}
       transaction={editingTransaction}
     />
-
-    {/* HEADER */}
     <div className="expenses-header">
       <h2 className="expenses-title">Expenses</h2>
       <p className="expenses-subtitle">
         Track and manage your spending
       </p>
     </div>
-
-    {/* FILTERS */}
     <div className="filters">
       <div className="filter-group">
         <label>Category</label>
@@ -144,11 +140,7 @@ return (
         Clear
       </button>
     </div>
-
-    {/* CARD */}
     <div className="expenses-card">
-      
-      {/* HEADER ROW (NEW 🔥) */}
       <div className="expenses-header-row">
         <h3>Transactions ({filteredTransactions.length})</h3>
 
@@ -159,8 +151,6 @@ return (
           + Add Expense
         </button>
       </div>
-
-      {/* LIST */}
       {filteredTransactions.length === 0 ? (
         <div className="empty">
           <div className="empty-text">No transactions</div>

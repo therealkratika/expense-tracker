@@ -38,12 +38,12 @@ const handleSubmit = async (e) => {
   try {
     setLoading(true);
     await onSave({
-      amount: type === "expense" ? numAmount : -numAmount,
-      category,
-      date,
-      description,
-      type,
-    });
+  amount: Number(amount),              
+  category: category || "Other",        
+  date: new Date(date).toISOString(),
+  description,
+  type,                               
+});
 
     onClose();
   } finally {
